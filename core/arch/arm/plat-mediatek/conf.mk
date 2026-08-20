@@ -18,6 +18,24 @@ CFG_DRAM_SIZE ?= 0x40000000
 # physical address, enable the config to increase MAX_XLAT_TABLES.
 CFG_MTK_RESERVED_VA ?= n
 
+ifeq ($(PLATFORM_FLAVOR),mt8163)
+# 2**2 = 4 cores, single cluster
+$(call force,CFG_TEE_CORE_NB_CORE,4)
+$(call force,CFG_CORE_CLUSTER_SHIFT,2)
+CFG_TZDRAM_START ?= 0x43200000
+CFG_TZDRAM_SIZE ?= 0x00400000
+CFG_SHMEM_START ?= 0x43600000
+CFG_SHMEM_SIZE ?= 0x00200000
+CFG_DRAM_SIZE = 0x80000000
+
+$(call force,CFG_WITH_SOFTWARE_PRNG,n)
+$(call force,CFG_ARM_SMCCC_TRNG,y)
+CFG_HWRNG_PTA ?= y
+ifeq ($(CFG_HWRNG_PTA),y)
+CFG_HWRNG_QUALITY ?= 1024
+endif
+endif
+
 ifeq ($(PLATFORM_FLAVOR),mt8173)
 # 2**1 = 2 cores per cluster
 $(call force,CFG_TEE_CORE_NB_CORE,4)
