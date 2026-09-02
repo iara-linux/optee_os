@@ -26,6 +26,7 @@
 #include <string.h>
 #include <sys/queue.h>
 #include <string_ext.h>
+#include <tee/rpmb_key.h>
 #include <tee/tee_fs.h>
 #include <tee/tee_fs_key_manager.h>
 #include <tee/tee_pobj.h>
@@ -315,14 +316,10 @@ out:
 
 #else /* !CFG_RPMB_TESTKEY */
 
-static TEE_Result tee_rpmb_key_gen(uint8_t *key, uint32_t len)
+__weak TEE_Result plat_rpmb_key_gen(const uint8_t *cid, uint8_t *key,
+				   uint32_t len)
 {
 	uint8_t message[RPMB_EMMC_CID_SIZE];
-
-	if (!key || RPMB_KEY_MAC_SIZE != len)
-		return TEE_ERROR_BAD_PARAMETERS;
-
-	IMSG("RPMB: Using generated key");
 
 	/*
 	 * PRV/CRC would be changed when doing eMMC FFU
@@ -332,11 +329,21 @@ static TEE_Result tee_rpmb_key_gen(uint8_t *key, uint32_t len)
 	 * CID [07: 01]: CRC (CRC7 checksum)
 	 * CID [00]: not used
 	 */
-	memcpy(message, rpmb_ctx->cid, RPMB_EMMC_CID_SIZE);
+	memcpy(message, cid, RPMB_EMMC_CID_SIZE);
 	memset(message + RPMB_CID_PRV_OFFSET, 0, 1);
 	memset(message + RPMB_CID_CRC_OFFSET, 0, 1);
 	return huk_subkey_derive(HUK_SUBKEY_RPMB, message, sizeof(message),
 				 key, len);
+}
+
+static TEE_Result tee_rpmb_key_gen(uint8_t *key, uint32_t len)
+{
+	if (!key || RPMB_KEY_MAC_SIZE != len)
+		return TEE_ERROR_BAD_PARAMETERS;
+
+	IMSG("RPMB: Using generated key");
+
+	return plat_rpmb_key_gen(rpmb_ctx->cid, key, len);
 }
 
 #endif /* !CFG_RPMB_TESTKEY */
