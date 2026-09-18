@@ -28,6 +28,9 @@ CFG_SHMEM_START ?= 0x43600000
 CFG_SHMEM_SIZE ?= 0x00200000
 CFG_DRAM_SIZE = 0x80000000
 
+# Enable cryptographic operations.
+CFG_MTK_CRYPTO_DRIVER ?= y
+
 $(call force,CFG_WITH_SOFTWARE_PRNG,n)
 $(call force,CFG_ARM_SMCCC_TRNG,y)
 CFG_HWRNG_PTA ?= y
