@@ -179,6 +179,12 @@ $(eval $(call cfg-depends-all,CFG_REE_FS_INTEGRITY_RPMB,CFG_RPMB_FS))
 # tee-supplicant process will open /dev/mmcblk<id>rpmb
 CFG_RPMB_FS_DEV_ID ?= 0
 
+# Byte offset of the file system within the RPMB partition, used when
+# CFG_RPMB_FS = y. Some platforms keep data of their own at the start of
+# RPMB which must be left alone, such as rollback counters written by a
+# an earlier ROM. Must be a multiple of the 256 byte RPMB block size.
+CFG_RPMB_FS_START_ADDRESS ?= 0
+
 # This config variable determines the number of entries read in from RPMB at
 # once whenever a function traverses the RPMB FS. Increasing the default value
 # has the following consequences:

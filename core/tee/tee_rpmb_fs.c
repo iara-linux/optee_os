@@ -34,8 +34,8 @@
 #include <trace.h>
 #include <util.h>
 
-#define RPMB_STORAGE_START_ADDRESS      0
-#define RPMB_FS_FAT_START_ADDRESS       512
+#define RPMB_STORAGE_START_ADDRESS      CFG_RPMB_FS_START_ADDRESS
+#define RPMB_FS_FAT_START_ADDRESS       (RPMB_STORAGE_START_ADDRESS + 512)
 #define RPMB_BLOCK_SIZE_SHIFT           8
 #define RPMB_CID_PRV_OFFSET             9
 #define RPMB_CID_CRC_OFFSET             15
@@ -2090,6 +2090,7 @@ static TEE_Result rpmb_fs_setup(void)
 	 * We're going to read a full block in order to have a full block
 	 * for the dummy write below.
 	 */
+	COMPILE_TIME_ASSERT(RPMB_STORAGE_START_ADDRESS % RPMB_DATA_SIZE == 0);
 	COMPILE_TIME_ASSERT(sizeof(struct rpmb_fs_partition) <=
 			    RPMB_DATA_SIZE);
 	partition_data = calloc(1, RPMB_DATA_SIZE);
