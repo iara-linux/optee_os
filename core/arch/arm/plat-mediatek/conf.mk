@@ -37,6 +37,9 @@ CFG_HWRNG_PTA ?= y
 ifeq ($(CFG_HWRNG_PTA),y)
 CFG_HWRNG_QUALITY ?= 1024
 endif
+
+# Preloader keeps its ARB data in the first RPMB block.
+CFG_RPMB_FS_START_ADDRESS ?= 0x100
 endif
 
 ifeq ($(PLATFORM_FLAVOR),mt8173)
