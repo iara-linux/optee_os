@@ -33,7 +33,6 @@ CFG_MTK_CRYPTO_DRIVER ?= y
 
 $(call force,CFG_WITH_SOFTWARE_PRNG,n)
 $(call force,CFG_ARM_SMCCC_TRNG,y)
-CFG_HWRNG_PTA ?= y
 ifeq ($(CFG_HWRNG_PTA),y)
 CFG_HWRNG_QUALITY ?= 1024
 endif
